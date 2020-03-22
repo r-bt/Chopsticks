@@ -5,7 +5,7 @@ const hummus = require('hummus');
 async function createPdf(page, template, name) {
     const browser = await puppeteer.launch({ headless: true });
     const loc = await browser.newPage();
-    const path = "file://" + files.getScriptDirectoryBase() + "/templates/" + template + "/template.html";
+    const path = "file://" + files.getScriptDirectoryBase() + "/templates/" + template + "/template/template.html";
     await loc.goto(path);
     await loc.setContent(page);
     const pdf = await loc.pdf({format: 'A3', printBackground: true});
@@ -13,13 +13,9 @@ async function createPdf(page, template, name) {
     return pdf;
 }
 
-function mergePdfs(pdfs, filename){
+function savePdfs(pdfs, filename){
 
-    if(pdfs.length < 2){
-        throw new Error("Less than two pdfs were provided");
-    }
-
-    var pdfWriter = hummus.createWriter("final.pdf");
+    var pdfWriter = hummus.createWriter(filename);
 
     pdfs.forEach((pdf, i) => {
         var pdfStream = new hummus.PDFRStreamForBuffer(pdf);
@@ -32,4 +28,4 @@ function mergePdfs(pdfs, filename){
 
 module.exports.createPdf = createPdf;
 
-module.exports.mergePdfs = mergePdfs;
+module.exports.savePdfs = savePdfs;

@@ -33,10 +33,9 @@ module.exports = () => {
             let content = templater.generate(text, config);
             promises.push(pdf.createPdf(content, config.template, file));
         });
-        let pdfFiles = files.getPdfs();
         Promise.all(promises).then((buffers) => {
-            pdf.mergePdfs(buffers, "finish.pdf")
-            spinner.stop()
+            pdf.savePdfs(buffers, "finish.pdf");
+            spinner.stop();
         });
     }
 

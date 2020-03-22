@@ -28,7 +28,7 @@ module.exports = class Templater{
         if(this.page == 0 && this.config['first_page'] != ""){
             page = this.config['first_page'];
         }
-        text = fs.readFileSync(__dirname + `/../templates/${template}/${page}`, 'utf8');
+        text = fs.readFileSync(__dirname + `/../templates/${template}/template/${page}`, 'utf8');
         return text;
     }
 
