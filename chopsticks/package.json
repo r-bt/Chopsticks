@@ -1,0 +1,24 @@
+{
+  "name": "chopsticks",
+  "version": "1.0.0",
+  "license": "MIT",
+  "bin": {
+    "chopsticks": "bin/chopsticks"
+  },
+  "scripts": "",
+  "devDependencies": {},
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "clear": "^0.1.0",
+    "configstore": "^5.0.1",
+    "figlet": "^1.2.4",
+    "hummus": "^1.0.108",
+    "inquirer": "^7.0.4",
+    "minimist": "^1.2.5",
+    "mustache": "^4.0.0",
+    "node-fetch": "^2.6.0",
+    "ora": "^4.0.3",
+    "puppeteer": "^2.1.1",
+    "showdown": "^1.9.1"
+  }
+}
