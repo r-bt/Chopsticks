@@ -23,8 +23,17 @@ module.exports = (args) => {
         process.exit()
     }
 
+    const askConfig = async() => {
+        console.log(chalk.yellow('Chopsticks Config:'));
+        let config = await inquirer.askChopsticks();
+        console.log(chalk.yellow('Template Config:'));
+        const template_config = await inquirer.askTemplate(config.template);
+        config = {...config, ...template_config}
+        return config;
+    }
+
     const run = async() => {
-        const config = await inquirer.askConfig();
+        config = await askConfig();
         const spinner = ora().start()
         templater = new Templater(config.template);
         promises = [];
@@ -39,7 +48,6 @@ module.exports = (args) => {
             spinner.stop();
         });
     }
-
     run();
 
 }
