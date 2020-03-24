@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const chalk = require('chalk')
+const path = require('path');
 
 const validate = (value) => {
     if(value.length){
@@ -8,6 +9,15 @@ const validate = (value) => {
     }else{
         return "Please respond"
     }
+}
+
+const filePath = (value) => {
+    return new Promise((resolve, reject) => {
+        if(path.isAbsolute(value)){
+            resolve(value)
+        }
+        resolve(process.cwd() + `/${value}`);
+    });
 }
 
 async function askChopsticks() {
@@ -37,16 +47,29 @@ async function askChopsticks() {
 }
 
 async function askTemplate(template) {
+    const functions = {"validate": validate, "filePath": filePath};
     const text = fs.readFileSync(__dirname + `/../templates/${template}/config.json`, 'utf8');
     try{
         const config = JSON.parse(text);
         if(config.tags.length > 0){
+            config.tags.map((item) => {
+                if("filter" in item){
+                    if(!(item.filter in functions)){
+                        console.log(chalk.red('Error: Invalid function name in template config'));
+                        process.exit(1);
+                    }
+                    return item.filter = functions[item.filter]
+                }
+                return item;
+            });
+            console.log(config.tags);
             return inquirer.prompt(config.tags);
         }else{
             return false;
         }
     }catch{
         console.log(chalk.red('Error: Invalid template config file'));
+        process.exit(1);
     }
 }
 
