@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const chalk = require('chalk')
 const path = require('path');
+const files = require('./files');
 
 const validate = (value) => {
     if(value.length){
@@ -11,6 +12,10 @@ const validate = (value) => {
     }
 }
 
+/**
+    Issues: Will filter the default value
+    Solution: Initalize global default and check against this
+**/
 const filePath = (value) => {
     return new Promise((resolve, reject) => {
         if(path.isAbsolute(value)){
@@ -48,26 +53,27 @@ async function askChopsticks() {
 
 async function askTemplate(template) {
     const functions = {"validate": validate, "filePath": filePath};
-    const text = fs.readFileSync(__dirname + `/../templates/${template}/config.json`, 'utf8');
     try{
-        const config = JSON.parse(text);
-        if(config.tags.length > 0){
-            config.tags.map((item) => {
-                if("filter" in item){
-                    if(!(item.filter in functions)){
-                        console.log(chalk.red('Error: Invalid function name in template config'));
-                        process.exit(1);
-                    }
-                    return item.filter = functions[item.filter]
-                }
-                return item;
-            });
-            console.log(config.tags);
-            return inquirer.prompt(config.tags);
-        }else{
-            return false;
+        const config = JSON.parse(fs.readFileSync(__dirname + `/../templates/${template}/config.json`, 'utf8'));
+        if(config.tags.length == 0){
+            console.log(config.tags.length);
+            return false
         }
-    }catch{
+        config.tags.map((item) => {
+            if("filter" in item){
+                if(!(item.filter in functions)){
+                    throw new Error("Invalid function name")
+                }
+                item.filter = functions[item.filter]
+            }
+            if("default" in item && ! path.isAbsolute(item.default)){
+                item.default = files.getScriptDirectoryBase() + `/templates/${template}/template/${item.default}`
+            }
+            return item;
+        });
+        return inquirer.prompt(config.tags);
+    }
+    catch{
         console.log(chalk.red('Error: Invalid template config file'));
         process.exit(1);
     }
