@@ -12,7 +12,7 @@
     "clear": "^0.1.0",
     "configstore": "^5.0.1",
     "figlet": "^1.2.4",
-    "hummus": "^1.0.108",
+    "hummus": "^1.0.111",
     "inquirer": "^7.0.4",
     "minimist": "^1.2.5",
     "mustache": "^4.0.0",
